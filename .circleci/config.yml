@@ -1,0 +1,46 @@
+# This config was automatically generated from your source code
+# Stacks detected: deps:java:.,tool:gradle:
+version: 2.1
+jobs:
+  test-java:
+    docker:
+      - image: cimg/openjdk:21.0
+    steps:
+      - checkout
+      - run:
+          name: Calculate cache key
+          command: |
+            find . -name 'pom.xml' -o -name 'gradlew*' -o -name '*.gradle*' | \
+                    sort | xargs cat > /tmp/CIRCLECI_CACHE_KEY
+      - restore_cache:
+          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+      - run:
+          command: ./gradlew check
+      - store_test_results:
+          path: build/test-results
+      - save_cache:
+          key: cache-{{ checksum "/tmp/CIRCLECI_CACHE_KEY" }}
+          paths:
+            - ~/.gradle/caches
+      - store_artifacts:
+          path: build/reports
+
+  deploy:
+    docker:
+      - image: cimg/openjdk:21.0
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:52E1ae7nxR5B7Gd3gl0xVuBhAoatbIgJAKo6evQUEW4"
+      - run:
+          name: List files in project directory
+          command: ls -la
+
+
+workflows:
+  build-and-test:
+    jobs:
+      - test-java
+      - deploy:
+          requires:
+            - test-java
