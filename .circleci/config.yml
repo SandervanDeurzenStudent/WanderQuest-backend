@@ -87,7 +87,7 @@ workflows:
       - docker-config
       - bump-docker-tag-kustomize:
           requires:
-            - docker/publish
+            - docker-config
       - aks-deploy:
           cluster-name: $CLUSTER_NAME
           resource-group: $RESOURCE_GROUP
