@@ -9,7 +9,7 @@ jobs:
       - checkout
       - run:
           name: Calculate cache key
-          command: |-
+          command: |
             find . -name 'pom.xml' -o -name 'gradlew*' -o -name '*.gradle*' | \
                     sort | xargs cat > /tmp/CIRCLECI_CACHE_KEY
       - restore_cache:
@@ -24,19 +24,23 @@ jobs:
             - ~/.gradle/caches
       - store_artifacts:
           path: build/reports
+
   deploy:
-    # This is an example deploy job, not actually used by the workflow
     docker:
-      - image: cimg/base:stable
+      - image: cimg/openjdk:21.0
     steps:
-      # Replace this with steps to deploy to users
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:52E1ae7nxR5B7Gd3gl0xVuBhAoatbIgJAKo6evQUEW4"
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: List files in project directory
+          command: ls -la
+
+
 workflows:
   build-and-test:
     jobs:
       - test-java
-    # - deploy:
-    #     requires:
-    #       - test-java
+      - deploy:
+          requires:
+            - test-java
