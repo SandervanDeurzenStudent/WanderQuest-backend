@@ -62,7 +62,7 @@ jobs:
             $SUDO mv ./kustomize /usr/local/bin
       - checkout
       - run:
-          name: Bump Docker Tag
+          name: Bump Docker Tags
           command: |
             cd manifests
             kustomize edit set image $APP_NAME=$DOCKER_LOGIN/$APP_NAME:$CIRCLE_SHA1
