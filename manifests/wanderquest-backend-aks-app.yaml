@@ -14,7 +14,7 @@ spec:
   ports:
   - port: 80
     protocol: TCP
-    targetPort: 1335
+    targetPort: 80
   selector:
     app: wanderquest-backend
   type: LoadBalancer
