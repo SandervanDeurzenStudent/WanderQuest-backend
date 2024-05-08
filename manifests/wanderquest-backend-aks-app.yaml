@@ -12,9 +12,9 @@ metadata:
   namespace: wanderquest-backend
 spec:
   ports:
-  - port: 8080
+  - port: 80
     protocol: TCP
-    targetPort: 8080
+    targetPort: 1337
   selector:
     app: wanderquest-backend
   type: LoadBalancer
@@ -35,7 +35,7 @@ spec:
         app: wanderquest-backend
     spec:
       containers:
-      - image: sandervandeurzen/test-java:latest
+      - image: sandervandeurzen/wanderquestbackendtovm:latest
         name: test
         ports:
         - containerPort: 8080
