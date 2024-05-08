@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: test
-          image: sandervandeurzen/test-java:latest
+          image: sandervandeurzen/wanderquestbackendtovm:latest
           ports:
             - containerPort: 8080
