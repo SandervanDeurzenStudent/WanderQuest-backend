@@ -35,7 +35,7 @@ spec:
         app: wanderquest-backend
     spec:
       containers:
-      - image: sandervandeurzen/wanderquestbackendtovm:latest
+      - image: sandervandeurzen/wanderquest-backend:latest
         name: test
         ports:
         - containerPort: 8080
