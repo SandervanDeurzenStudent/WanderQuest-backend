@@ -1,0 +1,33 @@
+name: Run JMeter Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Run JMeter tests
+        run: |
+          wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.3.tgz
+          tar -xf apache-jmeter-5.4.3.tgz
+          cd apache-jmeter-5.4.3/bin
+          ./jmeter -n -t jmeter/test-plan.jmx -l results.jtl
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: jmeter-results
+          path: apache-jmeter-5.4.3/bin/results.jtl
