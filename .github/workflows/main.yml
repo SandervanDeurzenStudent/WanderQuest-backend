@@ -3,31 +3,30 @@ name: Run JMeter Tests
 on:
   push:
     branches:
-      - main
+      - main  # Voer de workflow uit bij elke push naar de main branch
 
 jobs:
-  run_tests:
+  run_jmeter_tests:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Haal de repository op om toegang te krijgen tot de bestanden
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '11'
-
-      - name: Run JMeter tests
+      - name: Download and extract Apache JMeter
         run: |
           wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xf apache-jmeter-5.6.3.tgz
+        working-directory: ${{ github.workspace }}  # Werk vanuit de hoofdmap van de repository
+
+      - name: Run JMeter tests
+        run: |
           cd apache-jmeter-5.6.3/bin
-          ./jmeter -n -t jmeter/test-plan.jmx -l results.jtl
+          ./jmeter -n -t ../../jmeter/test-plan.jmx -l results.jtl
+        working-directory: ${{ github.workspace }}  # Werk vanuit de hoofdmap van de repository
 
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with:
           name: jmeter-results
-          path: apache-jmeter-5.4.3/bin/results.jtl
+          path: apache-jmeter-5.6.3/bin/results.jtl
