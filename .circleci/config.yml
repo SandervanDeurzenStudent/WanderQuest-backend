@@ -81,6 +81,15 @@ jobs:
             git commit -am "Bumps docker tag [skip ci]"
             git push origin $CIRCLE_BRANCH
 
+  apply-autoscaler:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: Apply HorizontalPodAutoscaler
+          command: kubectl apply -f manifests/autoscaling.yaml
+
 workflows:
   Deploy-App-on-AKS:
     jobs:
@@ -95,3 +104,6 @@ workflows:
             - bump-docker-tag-kustomize
           context:
             - wanderquest
+      - apply-autoscaler:
+          requires:
+            - aks-deploy
