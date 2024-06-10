@@ -1,13 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - deployment.yaml
-  - service.yaml
-  - namespace.yaml
-  - autoscaling.yaml
+- deployment.yaml
+- service.yaml
+- namespace.yaml
+- autoscaling.yaml
 namespace: wanderquest-backend
 images:
 - name: wanderquest-backend-aks-app
   newName: sandervandeurzen/wanderquest-backend-aks-app
-  newTag: 31dd7dbaaad500541b68d61db0dd0eedba145edb
-
+  newTag: fc154d749b8da119706585a86ae1f9e0399aa929
