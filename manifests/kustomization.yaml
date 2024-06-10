@@ -7,6 +7,7 @@ resources:
   - autoscaling.yaml
 namespace: wanderquest-backend
 images:
-  - name: wanderquest-backend-aks-app
-    newName: sandervandeurzen/wanderquest-backend-aks-app
-    newTag: 84e54f3faba3169c9bf9705619a0d7175db5e1b1
+- name: wanderquest-backend-aks-app
+  newName: sandervandeurzen/wanderquest-backend-aks-app
+  newTag: 31dd7dbaaad500541b68d61db0dd0eedba145edb
+

@@ -23,9 +23,11 @@ jobs:
         run: |
           cd apache-jmeter-5.6.3/bin
           ./jmeter -n -t ../../jmeter/test-plan.jmx -l results.jtl
+          cat results.jtl | grep false && exit 1  # Laat de workflow mislukken als er 'false' (mislukkingen) worden gedetecteerd in de resultaten
         working-directory: ${{ github.workspace }}  # Werk vanuit de hoofdmap van de repository
 
       - name: Upload test results
+        if: success()  # Upload de testresultaten alleen als de JMeter-tests succesvol waren
         uses: actions/upload-artifact@v2
         with:
           name: jmeter-results
