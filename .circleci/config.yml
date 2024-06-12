@@ -83,19 +83,13 @@ jobs:
 
   apply-autoscaler:
     docker:
-      - image: alpine:latest  # Or any image with kubectl pre-installed
+      - image: cimg/base:current  # Or any image with kubectl pre-installed
 
     steps:
       - checkout
       - run:
           name: Apply HorizontalPodAutoscaler
-          command: /path/to/kubectl apply -f manifests/hpa-mongodb.yaml
-
-
-
-
-
-
+          command: /usr/local/bin/kubectl apply -f manifests/hpa-mongodb.yaml
 
 workflows:
   Deploy-App-on-AKS:
