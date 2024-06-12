@@ -82,13 +82,11 @@ jobs:
             git push origin $CIRCLE_BRANCH
 
   apply-autoscaler:
-    # Remove the Docker section
     steps:
       - checkout
       - run:
           name: Apply HorizontalPodAutoscaler
           command: kubectl apply -f manifests/hpa-mongodb.yaml
-
 
 workflows:
   Deploy-App-on-AKS:
