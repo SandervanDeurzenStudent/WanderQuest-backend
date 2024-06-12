@@ -9,4 +9,4 @@ namespace: wanderquest-backend
 images:
 - name: wanderquest-backend-aks-app
   newName: sandervandeurzen/wanderquest-backend-aks-app
-  newTag: da3b0dbaa2d63ec80190cca8537581711de0a442
+  newTag: 5b329d0317446424718f147377c342f4de5539a6
