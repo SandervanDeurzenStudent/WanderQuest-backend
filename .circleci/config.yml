@@ -89,7 +89,7 @@ jobs:
       - checkout
       - run:
           name: Apply HorizontalPodAutoscaler
-          command: /usr/local/bin/kubectl apply -f manifests/hpa-mongodb.yaml
+          command: kubectl apply -f manifests/hpa-mongodb.yaml
 
 workflows:
   Deploy-App-on-AKS:
