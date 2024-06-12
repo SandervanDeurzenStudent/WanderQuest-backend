@@ -83,15 +83,13 @@ jobs:
 
   apply-autoscaler:
     docker:
-      - image: alpine:latest
-        volumes:
-          - /usr/bin/docker:/usr/bin/docker # Assuming docker is in /usr/bin on the host
-        working_dir: /usr/local/bin # Set working dir to access mounted kubectl (optional)
-        run:
-          - checkout
-          - run:
-              name: Apply HorizontalPodAutoscaler
-              command: kubectl apply -f manifests/hpa-mongodb.yaml
+      - image: alpine:latest  # Or any image with kubectl pre-installed
+
+    steps:
+      - checkout
+      - run:
+          name: Apply HorizontalPodAutoscaler
+          command: /path/to/kubectl apply -f manifests/hpa-mongodb.yaml
 
 
 
