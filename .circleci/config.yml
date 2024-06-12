@@ -82,6 +82,8 @@ jobs:
             git push origin $CIRCLE_BRANCH
 
   apply-autoscaler:
+    docker: # Empty docker section
+      - image: alpine:latest  # Or any placeholder image
     steps:
       - checkout
       - run:
