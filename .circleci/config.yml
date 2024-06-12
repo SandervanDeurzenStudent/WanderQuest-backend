@@ -84,14 +84,15 @@ jobs:
   apply-autoscaler:
     docker:
       - image: alpine:latest
-        run:
-          # Install kubectl
+          # Install kubectl (if using this approach)
           - apk add --no-cache kubectl
-          # Rest of your commands...
-          - checkout
-          - run:
-              name: Apply HorizontalPodAutoscaler
-              command: kubectl apply -f manifests/hpa-mongodb.yaml
+
+    steps: # Make sure the steps section is indented under the job definition
+      - checkout
+      - run:
+          name: Apply HorizontalPodAutoscaler
+          command: kubectl apply -f manifests/hpa-mongodb.yaml
+
 
 
 workflows:
