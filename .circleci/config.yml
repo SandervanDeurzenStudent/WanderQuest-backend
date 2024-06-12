@@ -85,7 +85,7 @@ jobs:
     docker:
       - image: alpine:latest
           # Installeer kubectl (als je deze aanpak gebruikt)
-          - apk add --no-cache kubectl
+#          - apk add --no-cache kubectl
     steps: # Zorg ervoor dat de sectie steps is ingesprongen onder de definitie van de job
       - checkout
       - run:
