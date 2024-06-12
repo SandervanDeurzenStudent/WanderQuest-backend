@@ -92,7 +92,8 @@ jobs:
           command: apk add --no-cache kubectl
       - run:
           name: Apply HorizontalPodAutoscaler
-          command: kubectl apply -f manifests/hpa-mongodb.yaml
+          command: kubectl apply --validate=false -f manifests/hpa-mongodb.yaml
+
 
 workflows:
   Deploy-App-on-AKS:
