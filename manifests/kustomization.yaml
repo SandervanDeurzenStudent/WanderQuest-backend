@@ -4,7 +4,7 @@ resources:
 - deployment.yaml
 - service.yaml
 - namespace.yaml
-- autoscaling.yaml
+- hpa-mongodb.yaml
 namespace: wanderquest-backend
 images:
 - name: wanderquest-backend-aks-app

@@ -1,53 +1,50 @@
 version: 2.1
-
 orbs:
+  node: circleci/node@5
   docker: circleci/docker@2.4.0
   azure-aks: circleci/azure-aks@0.3.0
   kubernetes: circleci/kubernetes@1.3.1
 
 jobs:
+  test-node:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Run tests
+          command: npm test --passWithNoTests
+  build-node:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          command: npm run build
+      - run:
+          name: Create the ~/artifacts directory if it doesn't exist
+          command: mkdir -p ~/artifacts
+      - run:
+          name: Copy artifacts
+          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+      - store_artifacts:
+          path: ~/artifacts
+          destination: node-build
   docker-config:
     docker:
-      - image: cimg/openjdk:21.0.2
+      - image: cimg/node:21.7.2
     steps:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - run:
-          name: Grade build
-          command: ./gradlew clean build
       - run:
           name: Build and push Docker image
           command: |
             docker build -t $DOCKER_LOGIN/$APP_NAME:latest .
             echo $DOCKER_PASSWORD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push $DOCKER_LOGIN/$APP_NAME:latest
-  aks-deploy:
-    docker:
-      - image: cimg/base:current
-    parameters:
-      cluster-name:
-        description: |
-          Name of the AKS cluster.
-        type: string
-      resource-group:
-        description: |
-          Resource group that the cluster is in
-        type: string
-    steps:
-      - checkout
-      - run:
-          name: Pull Updated code from repo
-          command: git pull origin $CIRCLE_BRANCH
-      - azure-aks/update-kubeconfig-with-credentials:
-          cluster-name: << parameters.cluster-name >>
-          install-kubectl: true
-          perform-login: true
-          resource-group: << parameters.resource-group >>
-      - kubernetes/create-or-update-resource:
-          resource-file-path: manifests/$APP_NAME.yaml
-          resource-name: kustomization/$APP_NAME
-
   bump-docker-tag-kustomize:
     docker:
       - image: cimg/base:current
@@ -62,7 +59,7 @@ jobs:
             $SUDO mv ./kustomize /usr/local/bin
       - checkout
       - run:
-          name: Bump Docker Tags
+          name: Bump Docker Tag
           command: |
             cd manifests
             kustomize edit set image $APP_NAME=$DOCKER_LOGIN/$APP_NAME:$CIRCLE_SHA1
@@ -80,20 +77,52 @@ jobs:
             git add manifests/kustomization.yaml
             git commit -am "Bumps docker tag [skip ci]"
             git push origin $CIRCLE_BRANCH
-
-  apply-autoscaler:
+  aks-deploy:
     docker:
       - image: cimg/base:current
+    parameters:
+      cluster-name:
+        description: |
+          Name of the AKS cluster.
+        type: string
+      resource-group:
+        description: |
+          Resource group that the cluster is in
+        type: string
     steps:
       - checkout
       - run:
-          name: Apply HorizontalPodAutoscaler
-          command: kubectl apply -f manifests/autoscaling.yaml
-
+          name: Pull Updated code from repos
+          command: git pull origin $CIRCLE_BRANCH
+      - run:
+          name: Install kubectl
+          command: |
+            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x ./kubectl
+            sudo mv ./kubectl /usr/local/bin/kubectl
+      - azure-aks/update-kubeconfig-with-credentials:
+          cluster-name: << parameters.cluster-name >>
+          install-kubectl: true
+          perform-login: true
+          resource-group: << parameters.resource-group >>
+      - kubernetes/create-or-update-resource:
+          resource-file-path: manifests/$APP_NAME.yaml
+          resource-name: kustomization/$APP_NAME
+      - kubernetes/create-or-update-resource:
+          resource-file-path: manifests/hpa-mongodb.yaml
+          resource-name: hpa/mongodb-hpa
 workflows:
-  Deploy-App-on-AKS:
+  build-and-test:
     jobs:
-      - docker-config
+      - test-node
+      - build-node:
+          requires:
+            - test-node
+      - docker-config:
+          requires:
+            - build-node
+          context:
+            - wanderquest
       - bump-docker-tag-kustomize:
           requires:
             - docker-config
@@ -104,6 +133,3 @@ workflows:
             - bump-docker-tag-kustomize
           context:
             - wanderquest
-      - apply-autoscaler:
-          requires:
-            - aks-deploy
