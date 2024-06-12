@@ -82,13 +82,17 @@ jobs:
             git push origin $CIRCLE_BRANCH
 
   apply-autoscaler:
-    docker: # Empty docker section
-      - image: alpine:latest  # Or any placeholder image
-    steps:
-      - checkout
-      - run:
-          name: Apply HorizontalPodAutoscaler
-          command: kubectl apply -f manifests/hpa-mongodb.yaml
+    docker:
+      - image: alpine:latest
+        run:
+          # Install kubectl
+          - apk add --no-cache kubectl
+          # Rest of your commands...
+          - checkout
+          - run:
+              name: Apply HorizontalPodAutoscaler
+              command: kubectl apply -f manifests/hpa-mongodb.yaml
+
 
 workflows:
   Deploy-App-on-AKS:
