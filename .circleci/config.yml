@@ -82,12 +82,12 @@ jobs:
             git push origin $CIRCLE_BRANCH
 
   apply-autoscaler:
-    docker: # Indent the docker section
+    docker:
       - image: alpine:latest
+        volumes:
+          - /usr/bin/docker:/usr/bin/docker # Assuming docker is in /usr/bin on the host
+        working_dir: /usr/local/bin # Set working dir to access mounted kubectl (optional)
         run:
-          # Install kubectl
-          - apk add --no-cache kubectl
-          # Rest of your commands...
           - checkout
           - run:
               name: Apply HorizontalPodAutoscaler
