@@ -14,7 +14,7 @@ public class Recieve {
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             channel.queueDeclare(QUEUE_NAME, true, false, false, null); // Let op de durable flag hier
-            System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+            System.out.println(" [*] Waiting for messagessss. To exit press CTRL+C");
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
