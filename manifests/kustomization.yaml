@@ -10,3 +10,4 @@ images:
 - name: wanderquest-backend-aks-app
   newName: sandervandeurzen/wanderquest-backend-aks-app
   newTag: b7ea6fbfd9b252cecb153eab6ffa9fb1b5b57bdc
+
